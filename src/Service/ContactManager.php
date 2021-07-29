@@ -31,4 +31,14 @@ class ContactManager
     {
         array_push($this->contacts, $contact);
     }
+
+    public function set(int $id, $contact)
+    {
+        if (key_exists($id, $this->contacts)) {
+            $this->contacts[$id] = $contact;
+            return;
+        }
+
+        throw new NotFoundHttpException();
+    }
 }
