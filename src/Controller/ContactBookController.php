@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\ContactDeserializer;
 use App\Service\ContactManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,22 +39,12 @@ class ContactBookController extends AbstractController
      */
     public function add(
         ContactManager $manager,
+        ContactDeserializer $deserializer,
         Request $request
     ): Response {
         $requestBody = $request->getContent();
 
-        if (!$requestBody) {
-            return new JsonResponse([
-                'message' => 'il faut un corps pour ajouter un contact',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $contact = json_decode($requestBody, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            return new JsonResponse([
-                'message' => 'erreur de format json',
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        $contact = $deserializer->deserialize($requestBody);
 
         $manager->push($contact);
         return new JsonResponse([
@@ -65,23 +56,13 @@ class ContactBookController extends AbstractController
      */
     public function put(
         ContactManager $manager,
+        ContactDeserializer $deserializer,
         Request $request,
         int $id
     ): Response {
         $requestBody = $request->getContent();
 
-        if (!$requestBody) {
-            return new JsonResponse([
-                'message' => 'il faut un corps pour ajouter un contact',
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        $contact = json_decode($requestBody, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            return new JsonResponse([
-                'message' => 'erreur de format json',
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        $contact = $deserializer->deserialize($requestBody);
 
         $manager->set($id, $contact);
         return new JsonResponse([
