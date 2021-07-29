@@ -2,20 +2,22 @@
 
 namespace App\Controller;
 
+use App\Service\ContactManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/contact-book", methods="GET")
+ */
 class ContactBookController extends AbstractController
 {
     /**
-     * @Route("/contact/book", name="contact_book")
+     * @Route("/")
      */
-    public function index(): Response
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ContactBookController.php',
-        ]);
+    public function index(
+        ContactManager $manager
+    ): Response {
+        return $this->json($manager->getAll());
     }
 }
